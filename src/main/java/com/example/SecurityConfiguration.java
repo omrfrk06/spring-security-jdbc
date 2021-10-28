@@ -20,10 +20,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
+    @Autowired
+    CustomAuthenticationProvider customAuthenticationProvider;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource);
+       /* auth.jdbcAuthentication()
+                .dataSource(dataSource);*/
 
                 /*
                 // H2 default for test
@@ -42,6 +45,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 );
 
                  */
+
+        auth.authenticationProvider(authProvider());
     }
 
     @Override
@@ -51,6 +56,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/").permitAll()
                 .and().formLogin();
+    }
+
+    @Bean
+    public CustomAuthenticationProvider authProvider() {
+        CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider();
+        return authenticationProvider;
     }
 
     @Bean
